@@ -6,16 +6,25 @@
 </head>
 <body>
 <h1>OpenCV Video</h1>
-<video id="video" src="trailer.mp4" muted width="320" height="240"></video>
+<video controls id="video" muted width="320" height="240">
+</video>
+<input type="file" name="file[]" class="file_multi_video" accept="video/*">
 <canvas id="canvasOutput" width="320" height="240"></canvas>
-<script async src="opencv.js" type="text/javascript" onload="onCvLoaded();"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript" onload="onCvLoaded();"></script>
 <script>
+$(document).on("change", ".file_multi_video", function(evt) {
+  var $source = $('#video');
+  $source[0].src = URL.createObjectURL(this.files[0]);
+  $source[0].load();
+});
+
 function onCvLoaded () {
-    console.log('cv', cv);
+    console.log("ok")
     cv.onRuntimeInitialized = onReady;
 }
+
 const video = document.getElementById('video');
-const actionBtn = document.getElementById('actionBtn');
 const FPS = 30;
 let stream;
 let streaming = false;
@@ -55,12 +64,12 @@ function onReady () {
         const begin = Date.now();
         cap.read(src)
         cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY);
-        cv.imshow('canvasOutput', dst);
+        const canv = document.getElementById('canvasOutput')
+        cv.imshow(canv, dst);
         const delay = 1000/FPS - (Date.now() - begin);
         setTimeout(processVideo, delay);
     }
 }
-
 </script>
 </body>
 </html>
